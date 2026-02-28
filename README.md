@@ -1,0 +1,2 @@
+# CAPSTONE
+Template Monorepo
