@@ -1,9 +1,18 @@
-export const metadata = { title: "Capstone" };
+import "../styles/global.css";
 
-export default function RootLayout({ children }) {
+export const metadata = {
+  title: "CAPSTONE",
+  description: "My Capstone Project",
+};
+
+export default function RootLayout({
+  children,
+}) {
   return (
-    <html lang="id">
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        {children}
+      </body>
     </html>
   );
 }
