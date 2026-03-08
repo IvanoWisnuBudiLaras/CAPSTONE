@@ -4,25 +4,32 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/index.js",
+    "dev": "node --env-file=.env --watch src/index.js",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node --env-file=.env dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@repo/shared": "*",
-    "express": "^5.1.0",
-    "helmet": "^8.1.0",
-    "cors": "^2.8.5",
-    "cookie-parser": "^1.4.6",
-    "express-rate-limit": "^8.2.1",
+    "@supabase/supabase-js": "^2.98.0",
+    "axios": "^1.13.6",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2"
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.6",
+    "drizzle-orm": "^0.45.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "postgres": "^3.4.8"
   },
   "devDependencies": {
     "@repo/tsconfig": "*",
-    "@types/express": "^5.0.0",
-    "@types/cors": "^2.8.17",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.5",
     "typescript": "^5.0.0"
   }
