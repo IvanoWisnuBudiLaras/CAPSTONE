@@ -6,9 +6,9 @@ export default function LoginPage() {
       {/* LEFT IMAGE */}
       <div className="hidden md:block">
         <img
-          src="/images/login-image.jpg"
+          src="/img/login-image.png"
           alt="saving money"
-          className="w-full h-full object-cover"
+          className="w-238 h-238 object-cover"
         />
       </div>
 
