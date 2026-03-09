@@ -4,17 +4,18 @@ import AuthButton from "./AuthButton";
 import { EmailIcon, GoogleIcon } from "./AuthIcons";
 
 const COPY = {
-  title: "LOGIN",
+  title: "SIGN UP",
   emailPlaceholder: "Email",
   passwordPlaceholder: "Password",
-  loginButton: "LOGIN",
+  confirmPasswordPlaceholder: "Confirm Password",
+  signupButton: "SIGN UP",
   divider: "OR",
-  googleButton: "Sign in with Google",
-  signupPrompt: "Don't have an account?",
-  signupAction: "Sign Up",
+  googleButton: "Sign up with Google",
+  loginPrompt: "Already have an account?",
+  loginAction: "Login",
 };
 
-export default function LoginForm() {
+export default function SignupForm() {
   return (
     <div className="w-full max-w-sm">
       <h1 className="text-4xl font-bold text-center mb-8">
@@ -39,12 +40,20 @@ export default function LoginForm() {
         <AuthInput
           type="password"
           name="password"
-          autoComplete="current-password"
+          autoComplete="new-password"
           placeholder={COPY.passwordPlaceholder}
           aria-label="Password"
         />
 
-        <AuthButton>{COPY.loginButton}</AuthButton>
+        <AuthInput
+          type="password"
+          name="confirmPassword"
+          autoComplete="new-password"
+          placeholder={COPY.confirmPasswordPlaceholder}
+          aria-label="Confirm Password"
+        />
+
+        <AuthButton>{COPY.signupButton}</AuthButton>
 
         <p className="text-center text-gray-400 text-sm">
           {COPY.divider}
@@ -59,9 +68,9 @@ export default function LoginForm() {
         </button>
 
         <p className="text-center text-sm text-gray-500">
-          {COPY.signupPrompt}{" "}
-          <Link href="/signup" className="text-sky-500 font-medium">
-            {COPY.signupAction}
+          {COPY.loginPrompt}{" "}
+          <Link href="/login" className="text-sky-500 font-medium">
+            {COPY.loginAction}
           </Link>
         </p>
       </form>
