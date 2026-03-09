@@ -5,7 +5,7 @@ export default function LoginPage() {
     <section className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       <div className="hidden md:block">
         <Image
-          src="/images/login-image.jpg"
+          src="/img/login-image.png"
           alt="Person saving money"
           width={1200}
           height={1400}
