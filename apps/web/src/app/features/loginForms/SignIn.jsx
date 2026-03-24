@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'; 
 
 const SignIn = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -11,6 +13,8 @@ const SignIn = () => {
   });
   
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -20,10 +24,51 @@ const SignIn = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validasi email
+    if (!formData.email) {
+      newErrors.email = 'Email wajib diisi';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Format email tidak valid';
+    }
+    
+    // Validasi password
+    if (!formData.password) {
+      newErrors.password = 'Password wajib diisi';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password minimal 6 karakter';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logging in with:", formData);
-    // Tambahkan logika autentikasi di sini
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      // Simulasi API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Di sini Anda akan memanggil API autentikasi
+      console.log("Logging in with:", formData);
+      
+      // Jika berhasil, redirect ke dashboard
+      router.push('/dashboard');
+      
+    } catch (error) {
+      setErrors({ general: 'Login gagal. Silakan coba lagi.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return ( 
@@ -49,6 +94,12 @@ const SignIn = () => {
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-5">
+            {errors.general && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {errors.general}
+              </div>
+            )}
+            
             {/* Email Field */}
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -59,8 +110,13 @@ const SignIn = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="EMAIL ADDRESS" 
-                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full focus:ring-2 focus:ring-red-500 transition-all outline-none text-sm hover:border-gray-300" 
+                className={`w-full pl-12 pr-4 py-3 border rounded-full focus:ring-2 focus:ring-red-500 transition-all outline-none text-sm hover:border-gray-300 ${
+                  errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                }`} 
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -73,7 +129,9 @@ const SignIn = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="PASSWORD" 
-                className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-full focus:ring-2 focus:ring-red-500 transition-all outline-none text-sm hover:border-gray-300" 
+                className={`w-full pl-12 pr-12 py-3 border rounded-full focus:ring-2 focus:ring-red-500 transition-all outline-none text-sm hover:border-gray-300 ${
+                  errors.password ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                }`} 
               />
               <button 
                 type="button" 
@@ -82,6 +140,9 @@ const SignIn = () => {
               >
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1 ml-1">{errors.password}</p>
+              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
@@ -103,9 +164,17 @@ const SignIn = () => {
 
             <button 
               type="submit"
-              className="w-full bg-[#db0804] hover:bg-red-700 text-white font-bold py-3 rounded-full transition-all shadow-lg shadow-red-200 mt-4 active:scale-[0.98]"
+              disabled={isLoading}
+              className="w-full bg-[#db0804] hover:bg-red-700 disabled:bg-red-300 text-white font-bold py-3 rounded-full transition-all shadow-lg shadow-red-200 mt-4 active:scale-[0.98] flex items-center justify-center"
             >
-              LOG IN
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  LOGGING IN...
+                </>
+              ) : (
+                'LOG IN'
+              )}
             </button>
           </form>
 

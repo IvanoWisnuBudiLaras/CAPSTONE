@@ -1,3 +1,22 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function HomePage() {
-  return <main><h1>Hello from Next.js 🚀</h1></main>;
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect ke halaman sign in
+    router.push('/UserPage/signin');
+  }, [router]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mx-auto mb-4"></div>
+        <p className="text-gray-600">Redirecting to sign in...</p>
+      </div>
+    </div>
+  );
 }
