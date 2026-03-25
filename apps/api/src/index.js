@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { applySecurityMiddleware } from "./middleware/security.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
+import transactionRouter from "./routes/transactions.js";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -21,6 +22,7 @@ applySecurityMiddleware(app);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/transactions", transactionRouter);
 
 app.get("/health", (_, res) => res.json({ status: "ok" }));
 

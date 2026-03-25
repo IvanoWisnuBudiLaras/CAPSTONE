@@ -109,6 +109,37 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/refresh", async (req, res) => {
+  const token = req.cookies?.refresh_token;
+  if (!token) {
+    return res.status(401).json({ success: false, message: "No refresh token" });
+  }
+
+  try {
+    const payload = /** @type {{ id: string }} */ (jwt.verify(token, REFRESH_SECRET));
+
+    const userList = await db.select().from(users).where(eq(users.id, payload.id)).limit(1);
+    const user = userList[0];
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+
+    const accessToken = jwt.sign({ id: user.id, role: user.role }, ACCESS_SECRET, { expiresIn: "15m" });
+
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: IS_PROD,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.json({ success: true, message: "Token refreshed" });
+  } catch {
+    return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
+  }
+});
+
 router.post("/logout", (_, res) => {
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
