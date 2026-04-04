@@ -89,7 +89,7 @@ export default function LoginForm() {
 
       {/* Title */}
       <h1 className="font-bebas text-4xl tracking-widest text-navy text-center mb-6">
-        LOGIN
+        SIGN IN
       </h1>
 
       {/* Error */}
@@ -140,7 +140,7 @@ export default function LoginForm() {
           type="submit"
           className="w-full bg-teal text-white font-bebas text-lg tracking-widest py-2.5 rounded-full hover:bg-teal-dark transition-colors shadow-md"
         >
-          LOGIN
+          SIGN IN
         </button>
 
         {/* Divider */}
