@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const isProd = process.env.NODE_ENV === 'production';
+
+const nextConfig = {
+  output: 'export',
+  // Set basePath ke nama repository jika deploy di GitHub Pages (hanya saat production)
+  basePath: isProd ? '/CAPSTONE' : '',
+  images: {
+    unoptimized: true, 
+  },
+}
+
 const withPWA = require('next-pwa')({
   dest:            'public',
   register:        true,
@@ -7,6 +17,5 @@ const withPWA = require('next-pwa')({
   disable:         process.env.NODE_ENV === 'development',
 })
 
-module.exports = withPWA({
-  nextConfig
-})
+// Menyelesaikan konfigurasi
+module.exports = withPWA(nextConfig)
