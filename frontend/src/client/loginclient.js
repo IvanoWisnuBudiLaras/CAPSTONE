@@ -102,6 +102,22 @@ export default function Login() {
     if (e.key === "Enter") handleSubmit();
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: typeof window !== 'undefined' ? window.location.origin + '/dashboard' : undefined,
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="flex flex-row min-h-screen w-full bg-white overflow-hidden">
       {/* KIRI: Gambar */}
@@ -171,7 +187,11 @@ export default function Login() {
             <div className="absolute w-full h-px bg-gray-200"></div>
           </div>
 
-          <button className="flex items-center justify-center gap-3 border-2 border-black py-3 rounded-full font-bebas text-2xl uppercase tracking-widest hover:bg-gray-50 transition-colors active:scale-95">
+          <button 
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="flex items-center justify-center gap-3 border-2 border-black py-3 rounded-full font-bebas text-2xl uppercase tracking-widest hover:bg-gray-50 transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div className="relative w-6 h-6 flex items-center justify-center">
               <Image src="/google-icon.svg" alt="Google" width={24} height={24} />
             </div>

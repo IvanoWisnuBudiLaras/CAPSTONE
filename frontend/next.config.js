@@ -1,14 +1,5 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production';
-
-const nextConfig = {
-  output: 'export',
-  // Set basePath ke nama repository jika deploy di GitHub Pages (hanya saat production)
-  basePath: isProd ? '/CAPSTONE' : '',
-  images: {
-    unoptimized: true, 
-  },
-}
+const nextConfig = {}
 
 const withPWA = require('next-pwa')({
   dest:            'public',
