@@ -1,117 +1,156 @@
-# Finance App — Sandwich Gen
 
-Monorepo: Next.js (frontend) + Express.js (backend) + Drizzle ORM + Supabase
+# Capstone Project
 
----
-
-## Struktur
-
-```
-/
-├── package.json          ← root, jalankan keduanya sekaligus
-├── frontend/             ← Next.js + Tailwind + Axios
-│   └── src/
-│       ├── app/          ← pages (App Router)
-│       │   ├── page.js           → redirect otomatis
-│       │   ├── login/page.js     → register & login
-│       │   ├── dashboard/page.js → ringkasan + insight + budget
-│       │   ├── transactions/page.js → CRUD transaksi
-│       │   └── allocations/page.js  → Mode Gajian
-│       ├── lib/
-│       │   ├── axios.js     → axios instance + auth interceptor
-│       │   └── supabase.js  → supabase client
-│       └── services/
-│           └── index.js    → semua API calls
-└── backend/              ← Express.js + Drizzle + Supabase
-    ├── src/
-    │   ├── app.js          → entry point
-    │   ├── db/
-    │   │   ├── schema.js   → 5 tabel Drizzle
-    │   │   └── index.js    → koneksi DB
-    │   ├── middleware/
-    │   │   └── auth.js     → verify Supabase JWT
-    │   └── routes/
-    │       ├── transactions.js  → CRUD + bulk (Mode Gajian)
-    │       ├── dashboard.js     → summary + insight + budgets
-    │       ├── categories.js
-    │       ├── budgets.js
-    │       ├── allocations.js   → rules + preview
-    │       └── profiles.js
-    ├── drizzle.config.js
-    └── package.json
-```
+> Deskripsi singkat project ini. Jelaskan apa yang dilakukan aplikasi ini dan masalah apa yang diselesaikan.
 
 ---
 
-## Setup (pertama kali)
+## Daftar Isi
+
+- [Deskripsi Proyek](#deskripsi-proyek)
+- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
+- [Setup Environment](#setup-environment)
+- [Cara Menjalankan Aplikasi](#cara-menjalankan-aplikasi)
+- [Struktur Proyek](#struktur-proyek)
+
+---
+
+## Deskripsi Proyek
+
+Tuliskan deskripsi lengkap project di sini. Contoh:
+
+> Aplikasi ini bertujuan untuk [tujuan aplikasi]. Dibangun menggunakan Next.js sebagai frontend dan Express sebagai backend dalam satu monorepo.
+
+---
+
+## Teknologi yang Digunakan
+
+| Teknologi | Versi | Kegunaan |
+|-----------|-------|----------|
+| Next.js | 16.x | Frontend |
+| Express | 5.x | Backend / REST API |
+| Zod | 4.x | Validasi data |
+| Turborepo | 2.x | Build orchestrator |
+| Node.js | 22.x | Runtime |
+
+---
+
+## Setup Environment
+
+### Prasyarat
+
+Pastikan sudah terinstall:
+- [Node.js](https://nodejs.org/) >= 22.0.0
+- npm >= 10.0.0
+
+Cek versi:
+```bash
+node -v
+npm -v
+```
+
+### 1. Clone Repository
 
 ```bash
-# 1. Install semua dependencies sekaligus
-npm run install:all
+git clone https://github.com/username/capstone.git
+cd capstone
+```
 
-# 2. Setup backend env
-cp backend/.env.example backend/.env
-# → isi SUPABASE_URL, SUPABASE_ANON_KEY, DATABASE_URL
+### 2. Install Dependencies
 
-# 3. Setup frontend env
-cp frontend/.env.example frontend/.env.local
-# → isi NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_SUPABASE_REF
+```bash
+npm install
+```
 
-# 4. Push schema ke Supabase
-npm run db:push
+### 3. Setup Environment Variables
 
-# 5. Jalankan keduanya sekaligus
-npm run dev
-# → frontend: http://localhost:3000
-# → backend:  http://localhost:5000
+```bash
+# API
+cp apps/api/.env.example apps/api/.env
+
+# Web
+cp apps/web/.env.local.example apps/web/.env.local
+```
+
+Buka `apps/api/.env` dan isi nilai berikut:
+
+```env
+NODE_ENV=development
+PORT=3001
+FRONTEND_URL=http://localhost:3000
+ACCESS_TOKEN_SECRET=isi_dengan_random_string_32_karakter
+REFRESH_TOKEN_SECRET=isi_dengan_random_string_32_karakter_lain
+```
+
+Generate random string untuk secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ---
 
-## API Endpoints
+## Cara Menjalankan Aplikasi
 
-| Method | URL | Keterangan |
-|--------|-----|------------|
-| GET | /api/health | Health check |
-| GET | /api/transactions | List transaksi bulan ini |
-| POST | /api/transactions | Tambah transaksi |
-| POST | /api/transactions/bulk | Mode Gajian — split otomatis |
-| PUT | /api/transactions/:id | Edit |
-| DELETE | /api/transactions/:id | Hapus |
-| GET | /api/dashboard/summary | Ringkasan bulan ini |
-| GET | /api/dashboard/insight | Insight vs bulan lalu |
-| GET | /api/dashboard/budgets | Progress budget |
-| GET | /api/allocations | Ambil aturan alokasi |
-| POST | /api/allocations | Simpan aturan (upsert) |
-| POST | /api/allocations/preview | Preview split tanpa simpan |
-| GET | /api/categories | List kategori |
-| POST | /api/categories | Tambah kategori |
-| PUT | /api/categories/:id | Edit |
-| DELETE | /api/categories/:id | Hapus |
-| GET | /api/budgets | List budget |
-| POST | /api/budgets | Set budget |
-| PUT | /api/budgets/:id | Update limit |
-| DELETE | /api/budgets/:id | Hapus |
-| GET | /api/profiles/me | Profil user |
-| POST | /api/profiles | Buat profil |
-| PUT | /api/profiles/me | Update profil |
+### Development
+
+Jalankan semua apps sekaligus dari root:
+```bash
+npm run dev
+```
+
+| App | URL |
+|-----|-----|
+| Frontend (Next.js) | http://localhost:3000 |
+| Backend (Express) | http://localhost:3001 |
+
+### Cek API berjalan
+
+```bash
+curl http://localhost:3001/health
+# { "status": "ok" }
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+### Production
+
+```bash
+npm start
+```
 
 ---
 
-## Halaman yang sudah ada
+## Struktur Proyek
 
-| Route | Keterangan |
-|-------|------------|
-| / | Redirect otomatis ke /dashboard atau /login |
-| /login | Register & login |
-| /dashboard | Ringkasan, budget progress, insight |
-| /transactions | List + tambah + hapus transaksi |
-| /allocations | Atur alokasi % + Mode Gajian |
+```
+capstone/
+├── apps/
+│   ├── web/          → Frontend (Next.js)
+│   └── api/          → Backend (Express)
+├── packages/
+│   ├── shared/       → Types, schemas, constants (dipakai web & api)
+│   ├── tsconfig/     → Shared TypeScript config
+│   └── eslint-config/→ Shared ESLint config
+├── turbo.json
+└── package.json
+```
 
-## Halaman yang perlu dibuat sendiri
+---
 
-| Route | Keterangan |
-|-------|------------|
-| /budgets | Set budget per kategori |
-| /categories | Kelola kategori |
-| /reports | Laporan split alokasi |
+## Kontribusi
+
+1. Fork repository ini
+2. Buat branch baru (`git checkout -b fitur/nama-fitur`)
+3. Commit perubahan (`git commit -m 'feat: tambah fitur baru'`)
+4. Push ke branch (`git push origin fitur/nama-fitur`)
+5. Buat Pull Request
+
+---
+
+## Lisensi
+
+[MIT](LICENSE) © 2025 — CAPSTONE CC26-PS104
