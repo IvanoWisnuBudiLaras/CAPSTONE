@@ -1,5 +1,7 @@
 import Login from '@/client/loginclient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title:       'Masuk',
   description: 'Masuk ke akun Fin Smart untuk mulai kelola keuangan generasi sandwich kamu.',

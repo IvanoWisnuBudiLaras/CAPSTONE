@@ -22,14 +22,26 @@ router.get('/me', async (req, res) => {
 // POST /api/profiles — buat profil setelah register
 router.post('/', async (req, res) => {
   try {
-    const { full_name, monthly_income } = req.body
-    if (!full_name) return res.status(400).json({ error: 'full_name wajib' })
+    const fullName = req.body.full_name ?? req.body.fullName
+    const monthlyIncome = req.body.monthly_income ?? req.body.monthlyIncome
+
+    if (!fullName) return res.status(400).json({ error: 'full_name wajib' })
+
+    const existing = await db.query.profiles.findFirst({
+      where: eq(profiles.userId, req.user.id),
+    })
+
+    if (existing) {
+      return res.json({ data: existing })
+    }
+
     const row = await db.insert(profiles).values({
       id:            createId(),
       userId:        req.user.id,
-      fullName:      full_name,
-      monthlyIncome: monthly_income ? String(monthly_income) : '0',
+      fullName,
+      monthlyIncome: monthlyIncome !== undefined ? String(monthlyIncome) : '0',
     }).returning()
+
     res.status(201).json({ data: row[0] })
   } catch (e) { res.status(500).json({ error: e.message }) }
 })

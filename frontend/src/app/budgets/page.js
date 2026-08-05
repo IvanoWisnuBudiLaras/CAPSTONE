@@ -1,4 +1,7 @@
 import Bugdets from '@/client/budgetsclient'
+import { ProtectedRoute } from '@/lib/protected-route'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'Budget',
@@ -6,5 +9,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <Bugdets />
+  return (
+    <ProtectedRoute>
+      <Bugdets />
+    </ProtectedRoute>
+  )
 }

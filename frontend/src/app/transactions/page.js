@@ -1,4 +1,7 @@
 import Transaction from '@/client/transactionsclient'
+import { ProtectedRoute } from '@/lib/protected-route'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'Transaksi',
@@ -6,5 +9,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <Transaction />
+  return (
+    <ProtectedRoute>
+      <Transaction />
+    </ProtectedRoute>
+  )
 }

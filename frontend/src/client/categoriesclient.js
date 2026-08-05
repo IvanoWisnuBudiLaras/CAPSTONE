@@ -196,6 +196,7 @@ function CategoryModal({ open, onClose, onSave, editData }) {
 export default function Categories() {
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error,    setError]    = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
     const [editData, setEditData] = useState(null)
     const [search, setSearch] = useState('')
@@ -205,10 +206,14 @@ export default function Categories() {
 
     async function loadAll() {
         setLoading(true)
+        setError(null)
         try {
             const r = await categoryService.getAll()
             setCategories(r.data.data)
-        } catch (e) { console.error(e) }
+        } catch (e) {
+            console.error(e)
+            setError(e.response?.data?.error || 'Gagal memuat kategori. Pastikan backend berjalan.')
+        }
         setLoading(false)
     }
 
@@ -218,6 +223,7 @@ export default function Categories() {
             await categoryService.remove(id)
             loadAll()
         } catch (e) {
+            console.error(e)
             alert(e.response?.data?.error || 'Gagal menghapus kategori')
         }
     }
@@ -270,6 +276,10 @@ export default function Categories() {
                         Tambah Kategori
                     </button>
                 </div>
+
+                {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">{error}</div>
+                )}
 
                 {/* Summary chips */}
                 <div className="flex flex-wrap gap-3 mb-5">

@@ -1,4 +1,7 @@
 import Report from '@/client/reportsclient'
+import { ProtectedRoute } from '@/lib/protected-route'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'Laporan',
@@ -6,5 +9,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <Report />
+  return (
+    <ProtectedRoute>
+      <Report />
+    </ProtectedRoute>
+  )
 }

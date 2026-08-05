@@ -2,10 +2,28 @@
 
 import Image from "next/image";
 import { Mail, User, Eye, EyeOff } from 'lucide-react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { supabaseReady } from "@/lib/supabase";
 import { profileService } from "@/services";
+
+const ensureProfile = async (displayName, monthlyIncome = 0) => {
+  try {
+    const { data } = await profileService.getMe();
+    return data?.data ?? null;
+  } catch (error) {
+    if (error?.response?.status === 404) {
+      const { data } = await profileService.create({
+        full_name: displayName,
+        monthly_income: monthlyIncome,
+      });
+      return data?.data ?? null;
+    }
+
+    throw error;
+  }
+};
 
 // --- Komponen TextField tetap sama ---
 const TextField = ({ label, value, onChange, type = "text", className = "", icon: Icon, showPasswordToggle = false, onKeyDown }) => {
@@ -40,6 +58,17 @@ export default function Login() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  useEffect(() => {
+    if (!supabaseReady) {
+      setError('Supabase belum dikonfigurasi. Periksa env variables NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.push('/dashboard');
+    });
+  }, [router]);
+
   const handleToggle = () => {
     setIsSignInMode(prev => !prev);
     setEmail("");
@@ -58,44 +87,59 @@ export default function Login() {
 
     setLoading(true);
 
-    if (isSignInMode) {
-      // ── LOGIN ──────────────────────────────────────────────
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      if (isSignInMode) {
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
-      if (signInError) {
-        setError(signInError.message);
-        setLoading(false);
-        return;
-      }
-
-      router.push("/dashboard");
-
-    } else {
-      // ── REGISTER ───────────────────────────────────────────
-      if (!fullName) {
-        setError("Nama lengkap wajib diisi.");
-        setLoading(false);
-        return;
-      }
-
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName }  // dikirim ke raw_user_meta_data
+        if (signInError) {
+          throw signInError;
         }
-      })
 
-      if (signUpError) {
-        setError(signUpError.message)
-        setLoading(false)
-        return
+        if (!data.session) {
+          throw new Error("Akun belum siap untuk login. Cek email verifikasi atau coba lagi.");
+        }
+
+        const profileName = data?.user?.user_metadata?.full_name || data?.user?.email?.split('@')[0] || email;
+        try {
+          await ensureProfile(profileName, 0);
+        } catch (profileError) {
+          console.error("Profil initialization failed", profileError);
+        }
+
+        router.push("/dashboard");
+      } else {
+        if (!fullName) {
+          throw new Error("Nama lengkap wajib diisi.");
+        }
+
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName },
+          },
+        });
+
+        if (signUpError) {
+          throw signUpError;
+        }
+
+        if (data?.session) {
+          try {
+            await ensureProfile(fullName, 0);
+          } catch (profileError) {
+            console.error("Profil initialization failed", profileError);
+          }
+          router.push('/dashboard');
+        } else {
+          setError('Pendaftaran berhasil. Silakan cek email Anda untuk verifikasi sebelum login.');
+        }
       }
-
-      router.push('/dashboard')
+    } catch (err) {
+      setError(err?.message || 'Terjadi kesalahan saat memproses akun.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleKeyDown = (e) => {

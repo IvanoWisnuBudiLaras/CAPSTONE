@@ -1,4 +1,7 @@
 import Categories from '@/client/categoriesclient'
+import { ProtectedRoute } from '@/lib/protected-route'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'Kategori',
@@ -6,5 +9,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <Categories />
+  return (
+    <ProtectedRoute>
+      <Categories />
+    </ProtectedRoute>
+  )
 }

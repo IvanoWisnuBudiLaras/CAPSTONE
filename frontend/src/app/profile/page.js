@@ -1,4 +1,7 @@
 import Profile from '@/client/profileclient'
+import { ProtectedRoute } from '@/lib/protected-route'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'Profile',
@@ -6,5 +9,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <Profile />
+  return (
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  )
 }
